@@ -1,0 +1,9 @@
+train: C:\Users\cheny\Desktop\yolo\YOLOv5-Lite-1.4\YOLOv5-Lite\data\train  # 118287 images
+val: C:\Users\cheny\Desktop\yolo\YOLOv5-Lite-1.4\YOLOv5-Lite\data\valid  # 5000 images
+test:
+
+# number of classes
+nc: 8
+
+# class names
+names: [ '1', '2', '3', '4', '5', '6', '7', '8']

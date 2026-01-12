@@ -1,0 +1,3 @@
+source ~/venvs/yoloenv/bin/activate
+cd projects/yolo
+python3 model_test.py
