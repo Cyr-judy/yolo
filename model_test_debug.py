@@ -146,20 +146,14 @@ def infer_img_debug(img0, model, conf_threshold=0.6):
 if __name__ == "__main__":
 
     # 模型加载
-    weights_path = r"C:\Users\cheny\Desktop\yolo\YOLOv5-Lite-1.4\YOLOv5-Lite\runs\train\exp10\weights\best.pt"
+    weights_path = r"C:\Users\cheny\Desktop\yolo\YOLOv5-Lite-1.4\YOLOv5-Lite\runs\train\exp11\weights\best.pt"
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     model = torch.load(weights_path, map_location=device, weights_only=False)['model'].float().fuse().eval().to(device)
 
     # 标签字典
     dic_labels = {
-        0: '1',
-        1: '2', 
-        2: '3',
-        3: '4',
-        4: '5',
-        5: '6',
-        6: '7',
-        7: '8'
+        0: 'rectangle',
+        1: 'line',
     }
 
     video = 0

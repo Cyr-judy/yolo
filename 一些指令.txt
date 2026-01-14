@@ -1,3 +1,9 @@
 source ~/venvs/yoloenv/bin/activate
 cd projects/yolo
 python3 model_test.py
+
+cd projects
+python3 photo_capture.py
+
+删了numpy 2.2.6（降级到2以下了
+python -m labelme

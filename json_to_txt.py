@@ -6,20 +6,14 @@ import random
 
 # 定义类别名称到索引的映射
 class_to_id = {
-    '1': 0,
-    '2': 1,
-    '3': 2,
-    '4': 3,
-    '5': 4,
-    '6': 5,
-    '7': 6,
-    '8': 7
+    'rectangle': 0,
+    'line': 1,
 }
 
 base_dir = os.getcwd()
 
 # 标注文件所在的文件夹路径
-json_folder_path = os.path.join(base_dir, "photo", "images_processed_2")
+json_folder_path = os.path.join(base_dir, "photo", "images", "in_use")
 
 # 输出标签文件的文件夹路径
 output_base_path = os.path.join(base_dir, "YOLOv5-Lite", "data")
@@ -29,15 +23,14 @@ os.makedirs(os.path.join(output_base_path, 'train', 'labels'), exist_ok=True)
 os.makedirs(os.path.join(output_base_path, 'valid', 'images'), exist_ok=True)
 os.makedirs(os.path.join(output_base_path, 'valid', 'labels'), exist_ok=True)
 
-# 读取并转换JSON文件
-json_files = glob.glob(os.path.join(json_folder_path, "**", "*.json"), recursive=True)
-print(f"找到 {len(json_files)} 个 JSON 文件")
-print("前几个路径示例：", json_files[:3])
+image_files = glob.glob(os.path.join(json_folder_path, "**", "*.jpg"), recursive=True)
+print(f"找到 {len(image_files)} 个图片文件")
 
-for json_file_path in json_files:
-    # 读取JSON文件
-    with open(json_file_path, 'r') as f:
-        data = json.load(f)
+for image_path in image_files:
+    # 获取文件名（不含扩展名）
+    image_id = os.path.splitext(os.path.basename(image_path))[0]
+    # 根据图片路径推导对应的 JSON 路径
+    json_file_path = os.path.join(os.path.dirname(image_path), f"{image_id}.json")
 
     # 获取图像文件名（不含扩展名）
     image_id = os.path.splitext(os.path.basename(json_file_path))[0]
@@ -55,30 +48,34 @@ for json_file_path in json_files:
 
     # 写入TXT标签文件
     with open(output_label_path, 'w') as txt_file:
-        for shape in data['shapes']:
-            if shape['shape_type'] == 'polygon':
-                # 计算多边形标注的最小和最大点来确定边界框
-                min_x = min(shape['points'], key=lambda x: x[0])[0]
-                max_x = max(shape['points'], key=lambda x: x[0])[0]
-                min_y = min(shape['points'], key=lambda x: x[1])[1]
-                max_y = max(shape['points'], key=lambda x: x[1])[1]
+        if os.path.exists(json_file_path):
+            with open(json_file_path, 'r') as f:
+                data = json.load(f)
 
-                # 计算边界框的中心点和宽度、高度
-                x_center = (min_x + max_x) / 2
-                y_center = (min_y + max_y) / 2
-                width = max_x - min_x
-                height = max_y - min_y
+            for shape in data['shapes']:
+                if shape['shape_type'] in ['polygon', 'rectangle']:
+                    # 计算多边形标注的最小和最大点来确定边界框
+                    min_x = min(shape['points'], key=lambda x: x[0])[0]
+                    max_x = max(shape['points'], key=lambda x: x[0])[0]
+                    min_y = min(shape['points'], key=lambda x: x[1])[1]
+                    max_y = max(shape['points'], key=lambda x: x[1])[1]
 
-                # 归一化坐标
-                x_center /= data['imageWidth']
-                y_center /= data['imageHeight']
-                width /= data['imageWidth']
-                height /= data['imageHeight']
+                    # 计算边界框的中心点和宽度、高度
+                    x_center = (min_x + max_x) / 2
+                    y_center = (min_y + max_y) / 2
+                    width = max_x - min_x
+                    height = max_y - min_y
 
-                # 获取类别索引
-                class_index = class_to_id[shape['label']]
+                    # 归一化坐标
+                    x_center /= data['imageWidth']
+                    y_center /= data['imageHeight']
+                    width /= data['imageWidth']
+                    height /= data['imageHeight']
 
-                # 写入TXT文件
-                txt_file.write(f'{class_index} {x_center} {y_center} {width} {height}\n')
+                    # 获取类别索引
+                    class_index = class_to_id[shape['label']]
+
+                    # 写入TXT文件
+                    txt_file.write(f'{class_index} {x_center} {y_center} {width} {height}\n')
 
 print("所有JSON文件的转换完成！")

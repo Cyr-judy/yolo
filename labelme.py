@@ -137,7 +137,7 @@ def augment_images(folders, output_dir, target_count=350):
                     break
 
         # 标注生成的图像
-        annotate_images(folder_output_dir, folder_index)
+       #  annotate_images(folder_output_dir, folder_index)
 
 
 def annotate_images(output_dir, label):
@@ -159,7 +159,7 @@ def annotate_images(output_dir, label):
 
 if __name__ == '__main__':
     base_dir = os.getcwd()
-    folders = [os.path.join(base_dir, "photo", "images", str(i)) for i in range(1, 9)]
-    output_dir = os.path.join(base_dir, "photo", "images_processed_2")
+    folders = [os.path.join(base_dir, "photo", "images","none")]
+    output_dir = os.path.join(base_dir, "photo", "images","none2")
 
     augment_images(folders, output_dir)
